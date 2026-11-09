@@ -56,7 +56,7 @@ Create settings.json beside the executable using this example.
 			// No absolute paths, separators, '..' or reserved device names.
 			// Renaming this selects another installation; old files/profiles are not moved.
 			"folder": "chromium",
-			// Exact ID from https://chromiumbuilds.org/api/v1/windows.json.
+			// Exact ID from https://chromiumbuilds.org/api/v1/windows.json
 			// Use snapshot-win-arm64 on ARM64; architecture is not selected automatically.
 			"buildId": "snapshot-win-x64",
 			// Disabled entries are neither updated nor configured, but settings are validated.
