@@ -21,12 +21,13 @@ internal static partial class ChromeCommandReference
 
 			foreach ((string key, string value) in mappings)
 			{
+
 				if (!value.StartsWith("command:", StringComparison.OrdinalIgnoreCase))
 				{
 					continue;
 				}
 
-				if (!TryId(value.AsSpan(8), out int id))
+				if (!value.StartsWith("command:", StringComparison.Ordinal) || !TryId(value.AsSpan("command:".Length), out int id))
 				{
 					throw new AppFailure(FailureKind.InvalidChromeCommand, browser.Folder, key, value);
 				}

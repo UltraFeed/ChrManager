@@ -114,11 +114,23 @@ Create settings.json beside the executable using this example.
 						"hover_tab": "0",
 						"hover_tab_delay": "400"
 					},
-					// Remapped hotkeys. Custom key/value pairs are allowed.
-					// Use {} to disable all custom mappings.
+					// Chrome++ keyboard shortcut remapping.
+					// Format: "SourceKey": "TargetKey" or "SourceKey": "command:ID".
+					// Combine keys with '+', without spaces.
+					// Supported modifiers: Ctrl, Alt, Shift, Win.
+					// Supported keys include A-Z, 0-9, F1-F24, arrows,
+					// navigation keys, and other common keyboard keys.
+					// Command IDs refer to Chromium's chrome_command_ids
+					// https://github.com/chromium/chromium/blob/main/chrome/app/chrome_command_ids.h
+					// The "command:" prefix must be lowercase.
+					// Existing browser shortcuts can be overridden.
+					// Invalid key combinations may be ignored by Chrome++.
+					// Use {} to disable custom mappings.
 					"keymapping":
 					{
-						// "F2": "Ctrl+PageUp"
+						// "F2": "Ctrl+PageUp",
+						// "F3": "Ctrl+PageDown",
+						// "Alt+Shift+S": "command:40015"
 					}
 				}
 			}
@@ -126,11 +138,6 @@ Create settings.json beside the executable using this example.
 	]
 }
 ```
-
-Add more entries with distinct folders to manage multiple browsers.
-Every property, including null values and empty collections, must be explicitly supplied.
-The keymapping section permits custom mappings.
-Values of the form `command:34014` use positive decimal IDs checked against the [Chromium command header](https://raw.githubusercontent.com/chromium/chromium/refs/heads/main/chrome/app/chrome_command_ids.h).
 
 ## Files and updates
 

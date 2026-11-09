@@ -76,6 +76,11 @@ internal static class SettingsValidator
 				{
 					throw new AppFailure(FailureKind.InvalidChromePlusSetting, browser.Folder, section + "." + key);
 				}
+
+				if (section == "keymapping" && (!KeymappingValidator.IsValidHotkey(key) || !KeymappingValidator.IsValidTarget(value)))
+				{
+					throw new AppFailure(FailureKind.InvalidChromePlusSetting, browser.Folder, section + "." + key);
+				}
 			}
 		}
 	}
