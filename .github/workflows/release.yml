@@ -1,0 +1,71 @@
+name: Release
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release
+  cancel-in-progress: false
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            rid: win-x64
+          - runner: windows-11-arm
+            rid: win-arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify native builds on matching architecture
+        shell: pwsh
+        run: |
+          dotnet publish src/ChrManager.csproj -c Debug -r ${{ matrix.rid }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet publish src/ChrManager.csproj -c Release -r ${{ matrix.rid }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  release:
+    needs: verify
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Read version and reject existing tag
+        id: version
+        shell: pwsh
+        run: |
+          $version = dotnet msbuild src/ChrManager.csproj -getProperty:Version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git rev-parse --verify --quiet "refs/tags/v$version"
+          if ($LASTEXITCODE -eq 0) { throw "Tag v$version already exists" }
+          "value=$version" >> $env:GITHUB_OUTPUT
+          exit 0
+      - name: Publish standalone native executables
+        shell: pwsh
+        run: |
+          dotnet msbuild src/ChrManager.csproj -t:PublishRelease
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Create release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_VERSION: ${{ steps.version.outputs.value }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          gh release create "v$env:RELEASE_VERSION" --target $env:RELEASE_SHA --title "ChrManager $env:RELEASE_VERSION" --generate-notes tmp/bin/release/ChrManager-win-x64.exe tmp/bin/release/ChrManager-win-arm64.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

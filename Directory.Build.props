@@ -1,0 +1,113 @@
+<Project>
+
+	<!-- Paths and output directories -->
+	<PropertyGroup>
+		<RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+		<TemporaryRoot>$(RepositoryRoot)tmp/</TemporaryRoot>
+		<BinRoot>$(TemporaryRoot)bin/</BinRoot>
+		<ObjRoot>$(TemporaryRoot)obj/</ObjRoot>
+
+		<BaseIntermediateOutputPath>$(ObjRoot)$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+		<BaseOutputPath>$(ObjRoot)build/$(MSBuildProjectName)/</BaseOutputPath>
+		<DefaultItemExcludes>$(DefaultItemExcludes);bin/**;obj/**;$(TemporaryRoot)**</DefaultItemExcludes>
+		<PublishDir>$(BinRoot)publish/$(MSBuildProjectName)/$(Configuration)/$(RuntimeIdentifier)/</PublishDir>
+	</PropertyGroup>
+
+	<Target Name="PublishRelease" Condition="'$(MSBuildProjectName)' == 'ChrManager'">
+		<ItemGroup>
+			<ReleaseRuntime Include="$(RuntimeIdentifiers)" />
+		</ItemGroup>
+		<PropertyGroup>
+			<ReleaseStagingRoot>$(ObjRoot)release/$(MSBuildProjectName)/</ReleaseStagingRoot>
+			<ReleaseOutputRoot>$(BinRoot)release/</ReleaseOutputRoot>
+		</PropertyGroup>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Restore"
+				 Properties="Configuration=Release" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish"
+				 Properties="Configuration=Release;RuntimeIdentifier=%(ReleaseRuntime.Identity);SelfContained=true;PublishDir=$(ReleaseStagingRoot)%(ReleaseRuntime.Identity)/" />
+		<Copy SourceFiles="@(ReleaseRuntime->'$(ReleaseStagingRoot)%(Identity)/$(AssemblyName).exe')"
+			  DestinationFiles="@(ReleaseRuntime->'$(ReleaseOutputRoot)$(AssemblyName)-%(Identity).exe')" />
+	</Target>
+
+	<!-- Assembly metadata -->
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+	</PropertyGroup>
+
+	<!-- Target framework and platforms -->
+	<PropertyGroup>
+		<WindowsVersion>10.0.17763.0</WindowsVersion>
+		<TargetFramework>net10.0-windows$(WindowsVersion)</TargetFramework>
+		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+		<PlatformTarget Condition="'$(RuntimeIdentifier)' == 'win-x64'">x64</PlatformTarget>
+		<PlatformTarget Condition="'$(RuntimeIdentifier)' == 'win-arm64'">ARM64</PlatformTarget>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<RollForward>LatestMajor</RollForward>
+		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+	</PropertyGroup>
+
+	<!-- Compiler settings -->
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Deterministic>true</Deterministic>
+		<Optimize>true</Optimize>
+		<DebugType>none</DebugType>
+		<JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
+
+	<!-- Diagnostics and code analysis -->
+	<PropertyGroup>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<WarningLevel>8</WarningLevel>
+		<NoWarn>1701;1702</NoWarn>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<WarningsAsErrors>$(WarningsAsErrors);NU1605</WarningsAsErrors>
+		<ErrorReport>none</ErrorReport>
+	</PropertyGroup>
+
+	<!-- Publishing -->
+	<PropertyGroup>
+		<!-- Deployment -->
+		<SelfContained>false</SelfContained>
+		<PublishSelfContained>true</PublishSelfContained>
+		<PublishSingleFile>false</PublishSingleFile>
+
+		<!-- Compilation and optimization -->
+		<PublishAot>true</PublishAot>
+		<OptimizationPreference>size</OptimizationPreference>
+		<IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+		<ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+
+		<!-- Preserve metadata and resources -->
+		<PublishTrimmed>true</PublishTrimmed>
+	</PropertyGroup>
+
+	<!-- Author information -->
+	<PropertyGroup>
+		<Authors>UltraFeed</Authors>
+		<Company>UltraFeed</Company>
+		<Copyright>Copyright © 2015-$([System.DateTime]::UtcNow.Year) $(Company)</Copyright>
+		<Description>Portable browser updater for Windows x64 and ARM64.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/$(Company)/ChrManager</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
+		<PublishDocumentationFile>false</PublishDocumentationFile>
+		<PublishDocumentationFiles>false</PublishDocumentationFiles>
+		<RepositoryBranch>main</RepositoryBranch>
+		<RepositoryType>Git</RepositoryType>
+		<RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+	</PropertyGroup>
+
+	<!-- Debug configuration -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<Optimize>false</Optimize>
+		<IlcDehydrate>false</IlcDehydrate>
+		<DebugType>portable</DebugType>
+		<StripSymbols>false</StripSymbols>
+	</PropertyGroup>
+
+</Project>
