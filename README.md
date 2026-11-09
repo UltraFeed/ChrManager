@@ -4,8 +4,6 @@
 
 # ChrManager
 
-</div>
-
 [![Build status](https://img.shields.io/github/actions/workflow/status/UltraFeed/ChrManager/ci.yml?branch=main&label=Build&logo=github&cacheSeconds=600&style=for-the-badge)](https://github.com/UltraFeed/ChrManager/actions?query=workflow%3AASF-ci+branch%3Amain)
 [![Last commit date](https://img.shields.io/github/last-commit/UltraFeed/ChrManager.svg?label=Updated&logo=github&cacheSeconds=600&style=for-the-badge)](https://github.com/UltraFeed/ChrManager/commits)
 [![Total downloads](https://img.shields.io/github/downloads/UltraFeed/ChrManager/total.svg?label=Downloads&logo=github&cacheSeconds=600&style=for-the-badge)](https://github.com/UltraFeed/ChrManager/releases)
@@ -14,9 +12,9 @@
 [![GitHub stable release date](https://img.shields.io/github/release-date/UltraFeed/ChrManager.svg?label=Released&logo=github&cacheSeconds=600)](https://github.com/UltraFeed/ChrManager/releases/latest)
 [![Github stable release downloads](https://img.shields.io/github/downloads/UltraFeed/ChrManager/latest/total.svg?label=Downloads&logo=github&cacheSeconds=600)](https://github.com/UltraFeed/ChrManager/releases/latest)
 
----
-
 [![Repobeats analytics image](https://repobeats.axiom.co/api/embed/e2d7cdfd54253a49b44a67d32cbb1784514f7e87.svg)](https://github.com/UltraFeed/ChrManager/pulse)
+
+</div>
 
 ---
 
