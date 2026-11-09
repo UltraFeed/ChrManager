@@ -21,7 +21,6 @@ internal static partial class ChromeCommandReference
 
 			foreach ((string key, string value) in mappings)
 			{
-
 				if (!value.StartsWith("command:", StringComparison.OrdinalIgnoreCase))
 				{
 					continue;
