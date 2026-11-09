@@ -127,17 +127,10 @@ Create settings.json beside the executable using this example.
 }
 ```
 
-Add more entries with distinct folders to manage multiple browsers. An empty browsers array is valid.
-Comments are accepted; trailing commas are rejected.
-Duplicate or unknown properties, invalid types, null required sections and conflicting values are errors.
-Every property, including null values and empty collections, must be explicitly supplied; there are no implicit defaults.
-Old nested execution/startup/network/ui/selfUpdate sections, proxy, localSource, mode/monitoring and chromePlus.enabled properties are not accepted.
-Missing/removed keys and sections are listed with the browser folder.
-Edit this file manually to match upstream; comments, ordering and upstream default values do not affect the comparison.
-The keymapping section permits custom mappings. Values of the form `command:34014`
-use positive decimal IDs checked against the [Chromium command header](https://raw.githubusercontent.com/chromium/chromium/refs/heads/main/chrome/app/chrome_command_ids.h).
-The header is requested only when command mappings are present. Invalid commands
-or an unavailable header stop startup before any changes.
+Add more entries with distinct folders to manage multiple browsers.
+Every property, including null values and empty collections, must be explicitly supplied.
+The keymapping section permits custom mappings.
+Values of the form `command:34014` use positive decimal IDs checked against the [Chromium command header](https://raw.githubusercontent.com/chromium/chromium/refs/heads/main/chrome/app/chrome_command_ids.h).
 
 ## Files and updates
 
