@@ -145,11 +145,13 @@ Create settings.json beside the executable using this example.
 ChrManager.exe
 settings.json
 chromium/
-  bin/chrome.exe
-  bin/version.dll
-  bin/chrome++.ini
-  profile/
-  cache/
+├── bin/
+│   ├── chrome.exe
+│   ├── version.dll
+│   ├── chrome++.ini
+│   ├── {browserVersion}/
+│   │   └── ...                  # Version-specific browser files
+│   └── ...                      # Other Chromium binaries and resources
+├── profile/                     # Browser user data
+└── cache/                       # Browser cache
 ```
-
-All data stays beside the executable. Profiles and browser caches stay outside the replaced bin directory.
