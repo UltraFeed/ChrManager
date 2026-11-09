@@ -16,7 +16,7 @@
 
 ---
 
-[![Repobeats analytics image](https://repobeats.axiom.co/api/embed/id.svg)](https://github.com/UltraFeed/ChrManager/pulse)
+[![Repobeats analytics image](https://repobeats.axiom.co/api/embed/e2d7cdfd54253a49b44a67d32cbb1784514f7e87.svg)](https://github.com/UltraFeed/ChrManager/pulse)
 
 ---
 

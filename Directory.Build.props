@@ -1,5 +1,10 @@
 <Project>
 
+	<!-- Assembly metadata -->
+	<PropertyGroup>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
+
 	<!-- Paths and output directories -->
 	<PropertyGroup>
 		<RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
@@ -28,11 +33,6 @@
 		<Copy SourceFiles="@(ReleaseRuntime->'$(ReleaseStagingRoot)%(Identity)/$(AssemblyName).exe')"
 			  DestinationFiles="@(ReleaseRuntime->'$(ReleaseOutputRoot)$(AssemblyName)-%(Identity).exe')" />
 	</Target>
-
-	<!-- Assembly metadata -->
-	<PropertyGroup>
-		<Version>0.0.1</Version>
-	</PropertyGroup>
 
 	<!-- Target framework and platforms -->
 	<PropertyGroup>
