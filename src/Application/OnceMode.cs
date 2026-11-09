@@ -21,7 +21,6 @@ internal sealed class OnceMode
 	{
 		if (result.Failed)
 		{
-
 			await _view.AcknowledgeAsync().ConfigureAwait(false);
 			return;
 		}

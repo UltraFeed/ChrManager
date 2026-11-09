@@ -4,7 +4,6 @@ namespace ChrManager.Application.Models;
 
 internal sealed record LauncherSettings
 {
-
 	[JsonRequired]
 	public int ExitDelaySeconds { get; set; }
 
@@ -26,7 +25,6 @@ internal sealed record LauncherSettings
 
 internal sealed record BrowserSettings
 {
-
 	[JsonRequired]
 	public string Folder { get; set; } = null!;
 
@@ -45,8 +43,6 @@ internal sealed record BrowserSettings
 
 internal sealed record ChromePlusSettings
 {
-
 	[JsonRequired]
 	public Dictionary<string, Dictionary<string, string>> Settings { get; set; } = null!;
 }
-

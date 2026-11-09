@@ -71,6 +71,7 @@ internal sealed class SelfUpdater : ISelfUpdatePreparation
 			throw;
 		}
 	}
+
 	private static string ExpectedArchitecture ()
 	{
 		if (System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
@@ -80,9 +81,9 @@ internal sealed class SelfUpdater : ISelfUpdatePreparation
 
 		return "x64";
 	}
+
 	private static void ValidateMetadata (SelfRelease release, string expectedArch)
 	{
-
 		if (release.Rid != "win-" + expectedArch)
 		{
 			throw new AppFailure(FailureKind.SelfUpdateArchitectureMismatch);
@@ -93,6 +94,7 @@ internal sealed class SelfUpdater : ISelfUpdatePreparation
 			throw new AppFailure(FailureKind.SelfUpdateChecksumRequired);
 		}
 	}
+
 	private async Task StageReleaseAsync (SelfUpdateFiles files, SelfRelease release, string expectedArch, CancellationToken token)
 	{
 		string executable = files.NewExecutable;

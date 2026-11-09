@@ -12,6 +12,7 @@ using ChrManager.Infrastructure.Startup;
 namespace ChrManager.Infrastructure.Installation;
 
 internal sealed record ChromePayload (string File, string Hash, bool Temporary = true, string? PackageHash = null);
+
 internal sealed class ChromePlusManager
 {
 	private readonly HttpClient _http;
@@ -218,7 +219,6 @@ internal sealed class ChromePlusManager
 
 internal static class GitHubRelease
 {
-
 	public static async Task<List<ReleaseAsset>> ReadAssetsAsync (HttpClient http, Uri endpoint, CancellationToken token)
 	{
 		// ResponseHeadersRead does not apply HttpClient.Timeout to subsequent body reads.

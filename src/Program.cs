@@ -36,7 +36,6 @@ internal static class Program
 		}
 		catch (Exception ex) when (OperationErrors.CanReport(ex))
 		{
-
 			WriteFailureLog(ex);
 			if (context?.Role != LaunchRole.UpdateHelper)
 			{

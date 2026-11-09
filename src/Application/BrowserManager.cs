@@ -77,7 +77,6 @@ internal sealed class BrowserManager
 		}
 		catch (Exception ex) when (ex is not OperationCanceledException || !token.IsCancellationRequested)
 		{
-
 			_view.ReportError(_view.Language.Format(StringId.BrowserFailure, browser.Folder) + " " + _view.Explain(ex));
 			_log.Error(ex, DiagnosticKind.BrowserFailed, browser.Folder);
 			return new(BrowserUpdateStatus.Failed, ex);
