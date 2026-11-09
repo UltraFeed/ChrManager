@@ -137,7 +137,7 @@ Create settings.json beside the executable using this example.
 }
 ```
 
-## Files and updates
+## Files
 
 ```text
 ChrManager.exe
