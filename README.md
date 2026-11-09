@@ -20,12 +20,11 @@
 
 ---
 
-Portable browser updater for Windows x64 and ARM64.
-
-Inspired by [chrlauncher](https://github.com/henrypp/chrlauncher), but developed from scratch to suit my own requirements and preferences.
-
-Only one manager runs per Windows user, regardless of the portable directory.
-Autostart uses a shortcut in shell:startup. The manager is never registered as a default browser or HTTP/HTTPS handler.
+> [!NOTE]
+> Portable browser updater for Windows x64 and ARM64.
+> Inspired by [chrlauncher](https://github.com/henrypp/chrlauncher), but developed from scratch to suit my own requirements and preferences.
+> Only one manager runs per Windows user, regardless of the portable directory.
+> Autostart uses a shortcut in shell:startup. The manager is never registered as a default browser or HTTP/HTTPS handler.
 
 ## Configuration
 
