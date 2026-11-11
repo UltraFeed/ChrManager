@@ -28,6 +28,14 @@ internal sealed class ManagerPassRunner
 		if (_resume.Job is not null)
 		{
 			summary = _resume.Job.Summary;
+			if (_resume.Phase == SelfUpdatePhase.RolledBack)
+			{
+				_view.ReportError(_view.Language.Format(StringId.SelfUpdateRolledBack, _resume.Job.PreviousVersion));
+			}
+			else
+			{
+				_view.Say(StringId.SelfUpdateCompleted, _resume.Job.PreviousVersion, _resume.Job.Version);
+			}
 		}
 		else
 		{
@@ -35,7 +43,7 @@ internal sealed class ManagerPassRunner
 		}
 
 		_view.Say(StringId.Summary, summary.Succeeded, summary.Deferred, summary.Failed);
-		if (summary.Failed > 0)
+		if (summary.Failed > 0 || _resume.Phase == SelfUpdatePhase.RolledBack)
 		{
 			return new(summary, PassOutcome.Failed);
 		}

@@ -11,7 +11,6 @@ namespace ChrManager.Infrastructure.Configuration;
 [JsonSerializable(typeof(LauncherSettings))]
 [JsonSerializable(typeof(UpdateJob))]
 [JsonSerializable(typeof(UpdateProgress))]
-[JsonSerializable(typeof(SelfRelease))]
 [JsonSerializable(typeof(BuildFeed))]
 [JsonSerializable(typeof(InstallationPhase))]
 [JsonSerializable(typeof(SelfUpdatePhase))]

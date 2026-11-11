@@ -8,15 +8,14 @@ internal static class BrowserResolver
 {
 	public static string Architecture (string binary)
 	{
+		return IsX64(binary) ? "x64" : throw new AppFailure(FailureKind.UnsupportedPeArchitecture, binary);
+	}
+
+	public static bool IsX64 (string binary)
+	{
 		using FileStream file = File.OpenRead(binary);
 		using PEReader reader = new(file);
-		return reader.PEHeaders.CoffHeader.Machine switch
-		{
-			Machine.Amd64 => "x64",
-			Machine.Arm64 => "arm64",
-			Machine.I386 => "x86",
-			_ => throw new AppFailure(FailureKind.UnsupportedPeArchitecture, binary)
-		};
+		return reader.PEHeaders.CoffHeader.Machine == Machine.Amd64 && reader.PEHeaders.PEHeader?.Magic == PEMagic.PE32Plus;
 	}
 
 	public static string? QueryVersion (string binary)

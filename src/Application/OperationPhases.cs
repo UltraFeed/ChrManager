@@ -18,5 +18,7 @@ internal enum SelfUpdatePhase
 	[JsonStringEnumMemberName("restoring")] Restoring,
 	[JsonStringEnumMemberName("complete")] Complete,
 	[JsonStringEnumMemberName("failed")] Failed,
+	[JsonStringEnumMemberName("rolled-back")] RolledBack,
+	[JsonStringEnumMemberName("recovery-failed")] RecoveryFailed,
 	[JsonStringEnumMemberName("aborted")] Aborted
 }

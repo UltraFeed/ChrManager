@@ -20,10 +20,10 @@
 ---
 
 > [!NOTE]
-> Portable browser updater for Windows x64 and ARM64.
+> Portable updater for portable chromium builds on Windows x64.
 > Inspired by [chrlauncher](https://github.com/henrypp/chrlauncher), but developed from scratch to suit my own requirements and preferences.
 > Only one manager runs per Windows user, regardless of the portable directory.
-> Autostart uses a shortcut in shell:startup. The manager is never registered as a default browser or HTTP/HTTPS handler.
+> Autostart uses a shortcut in shell:startup. Browser registration is handled by the browser itself. Choose default apps in Windows Settings.
 
 ## Configuration
 
@@ -56,7 +56,6 @@ Create settings.json beside the executable using this example.
 			// Renaming this selects another installation; old files/profiles are not moved.
 			"folder": "chromium",
 			// Exact ID from https://chromiumbuilds.org/api/v1/windows.json
-			// Use snapshot-win-arm64 on ARM64; architecture is not selected automatically.
 			"buildId": "snapshot-win-x64",
 			// Disabled entries are neither updated nor configured, but settings are validated.
 			"enabled": true,

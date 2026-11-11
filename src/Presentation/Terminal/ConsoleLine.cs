@@ -7,6 +7,8 @@ namespace ChrManager.Presentation.Terminal;
 
 internal static class ConsoleLine
 {
+	private static readonly Lock OutputLock = new();
+	private static List<(string Line, Style Style)>? _pending;
 	private static readonly string ProcessLabel = FormattableString.Invariant($"{AppInfo.Name}-{Environment.ProcessId}");
 
 	public static string Format (DateTimeOffset timestamp, LogEventLevel level, string operation, string? message)
@@ -36,6 +38,39 @@ internal static class ConsoleLine
 
 	public static void Write (string line, Style style)
 	{
-		AnsiConsole.Write(new Text(line + Environment.NewLine, style));
+		lock (OutputLock)
+		{
+			if (_pending is not null)
+			{
+				_pending.Add((line, style));
+			}
+			else
+			{
+				WriteCore(line, style);
+			}
+		}
 	}
+
+	public static void BeginLive ()
+	{
+		lock (OutputLock)
+		{
+			_pending = [];
+		}
+	}
+
+	public static void EndLive ()
+	{
+		lock (OutputLock)
+		{
+			List<(string Line, Style Style)>? pending = _pending;
+			_pending = null;
+			foreach ((string line, Style style) in pending ?? [])
+			{
+				WriteCore(line, style);
+			}
+		}
+	}
+
+	private static void WriteCore (string line, Style style) { AnsiConsole.Write(new Text(line + Environment.NewLine, style)); }
 }

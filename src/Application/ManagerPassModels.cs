@@ -10,6 +10,6 @@ internal sealed record PassExecution (PassSummary Summary, PassOutcome Outcome)
 	public bool Failed => Outcome == PassOutcome.Failed;
 }
 
-internal sealed record UpdateResume (UpdateJob? Job);
+internal sealed record UpdateResume (UpdateJob? Job, SelfUpdatePhase? Phase);
 
 internal enum SelfUpdateOutcome { None, Handover, Failed }

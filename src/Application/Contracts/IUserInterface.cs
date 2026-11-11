@@ -15,6 +15,10 @@ internal interface IOperationProgress : IProgress<double>, IDisposable
 {
 }
 
+internal readonly record struct DownloadProgress (long Received, long? Total, bool Complete = false);
+
+internal interface IDownloadProgress : IProgress<DownloadProgress>, IAsyncDisposable;
+
 internal interface IUserInterface
 {
 	public LocalizationProvider Language { get; }
@@ -27,4 +31,5 @@ internal interface IUserInterface
 		where T : struct, Enum;
 	public Task AcknowledgeAsync ();
 	public IOperationProgress BeginOperation (string title);
+	public IDownloadProgress BeginDownload (string title);
 }

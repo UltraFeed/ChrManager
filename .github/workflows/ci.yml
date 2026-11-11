@@ -38,10 +38,10 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
 
-      - name: Publish native executables
+      - name: Publish native executable
         shell: pwsh
         run: |
-          dotnet msbuild src/ChrManager.csproj -t:PublishRelease
+          dotnet publish src/ChrManager.csproj -c Release
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
           }
@@ -50,8 +50,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ChrManager-Windows
-          path: |
-            tmp/bin/release/ChrManager-win-x64.exe
-            tmp/bin/release/ChrManager-win-arm64.exe
+          path: tmp/bin/release/ChrManager.exe
           if-no-files-found: error
           retention-days: 30

@@ -1,3 +1,4 @@
+using ChrManager.Application.Contracts;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
@@ -51,7 +52,7 @@ internal sealed class ManagedBrowserInstallation : IManagedBrowserInstallation
 	private string RelativePackage => Path.GetFileName(PackagePath);
 	private string PackagePath { get; }
 
-	public async Task DownloadAsync (IProgress<double> progress, CancellationToken token)
+	public async Task DownloadAsync (IProgress<DownloadProgress> progress, CancellationToken token)
 	{
 		string identity = PackageIdentity(Release.Build, Release.Package, Release.Architecture);
 		string? recordedHash = null;

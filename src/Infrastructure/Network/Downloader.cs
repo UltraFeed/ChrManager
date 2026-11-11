@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using ChrManager.Application;
+using ChrManager.Application.Contracts;
 using ChrManager.Infrastructure.Persistence;
 
 namespace ChrManager.Infrastructure.Network;
@@ -15,7 +16,7 @@ internal sealed class Downloader
 		_sizeWarning = sizeWarning;
 	}
 
-	public async Task<string> DownloadAsync (Uri url, string target, string? expectedHash, long expectedSize, IProgress<double>? progress, CancellationToken token)
+	public async Task<string> DownloadAsync (Uri url, string target, string? expectedHash, long expectedSize, IProgress<DownloadProgress>? progress, CancellationToken token)
 	{
 		if (url.Scheme != Uri.UriSchemeHttps && !(url.IsLoopback && url.Scheme == Uri.UriSchemeHttp))
 		{
@@ -36,6 +37,7 @@ internal sealed class Downloader
 			using HttpResponseMessage response = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false);
 			_ = response.EnsureSuccessStatusCode();
 			long? length = response.Content.Headers.ContentLength;
+			long? total = length ?? (expectedSize > 0 ? expectedSize : null);
 			Stream input = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
 
 			await using ConfiguredAsyncDisposable inputLifetime = input.ConfigureAwait(false);
@@ -51,7 +53,7 @@ internal sealed class Downloader
 					await file.WriteAsync(buffer.AsMemory(0, read), token).ConfigureAwait(false);
 					hash.AppendData(buffer, 0, read);
 					count += read;
-					progress?.Report((length ?? expectedSize) > 0 ? count * 100d / (length ?? expectedSize) : 0);
+					progress?.Report(new(count, total));
 				}
 
 				await file.FlushAsync(token).ConfigureAwait(false);
@@ -74,6 +76,7 @@ internal sealed class Downloader
 			}
 
 			File.Move(partial, target);
+			progress?.Report(new(count, total, Complete: true));
 			return actual;
 		}
 		finally

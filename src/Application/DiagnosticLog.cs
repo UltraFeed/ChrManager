@@ -11,11 +11,12 @@ internal enum DiagnosticKind
 	BrowserCatalogueFailed,
 	BrowserFailed,
 	SelfUpdateFailed,
-	SelfUpdateCompleted,
+	SelfUpdateInstalling,
+	SelfUpdateRestoring,
+	SelfUpdateRecoveryFailed,
 	TemporaryCleanupFailed,
 	ChromePlusMetadataFailed,
 	ChromePlusChecking,
-	ChromePlusDownloading,
 	GitHubFallback,
 	CatalogueSizeMismatch
 }

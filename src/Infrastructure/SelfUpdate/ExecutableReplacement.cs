@@ -29,11 +29,13 @@ internal sealed class ExecutableReplacement
 	}
 	public async Task<int> RunAsync (TimeSpan readinessTimeout)
 	{
+		bool parentExited = false;
 		try
 		{
 			using FileStream gate = new(_files.Gate, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 1, FileOptions.DeleteOnClose);
 			await AnnounceReadyAsync().ConfigureAwait(false);
 			await WaitForParentAsync().ConfigureAwait(false);
+			parentExited = true;
 
 			if (File.Exists(_files.Abort))
 			{
@@ -53,7 +55,11 @@ internal sealed class ExecutableReplacement
 		catch (Exception ex) when (OperationErrors.IsExpected(ex))
 		{
 			_log.Error(ex, DiagnosticKind.SelfUpdateFailed);
-			Progress(_jobPath, SelfUpdatePhase.Failed, ex.GetType().Name);
+			if (parentExited)
+			{
+				await RecoverAsync(ex).ConfigureAwait(false);
+			}
+
 			return 1;
 		}
 	}
@@ -86,31 +92,58 @@ internal sealed class ExecutableReplacement
 	{
 		using NamedPipeServerStream readiness = new(InternalProtocol.ReadinessPipe(_job.Nonce), PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
 		Progress(_jobPath, SelfUpdatePhase.BackingUp);
+		_log.Information(DiagnosticKind.SelfUpdateInstalling, _job.Version);
 		File.Move(_target, _backup);
+		Progress(_jobPath, SelfUpdatePhase.Installing);
+		File.Move(_files.NewExecutable, _target);
+		Progress(_jobPath, SelfUpdatePhase.Starting);
+		using Process replacement = StartReplacement();
+		await ConfirmReadinessAsync(replacement, readiness, timeout).ConfigureAwait(false);
+	}
+
+	private async Task RecoverAsync (Exception failure)
+	{
 		try
 		{
-			Progress(_jobPath, SelfUpdatePhase.Installing);
-			File.Move(_files.NewExecutable, _target);
-			Progress(_jobPath, SelfUpdatePhase.Starting);
-			using Process replacement = StartReplacement();
-			await ConfirmReadinessAsync(replacement, readiness, timeout).ConfigureAwait(false);
-			Progress(_jobPath, SelfUpdatePhase.Complete);
-			_log.Information(DiagnosticKind.SelfUpdateCompleted, _job.Version);
-		}
-		catch
-		{
-			Progress(_jobPath, SelfUpdatePhase.Restoring);
-			if (File.Exists(_target))
+			bool backupExists = File.Exists(_backup);
+			string original = backupExists ? _backup : _target;
+			string hash = await Downloader.FileSha256Async(original, CancellationToken.None).ConfigureAwait(false);
+			if (hash != _job.PreviousSha256)
 			{
-				File.Delete(_target);
+				throw new AppFailure(FailureKind.InvalidUpdateHandover);
 			}
 
-			File.Move(_backup, _target);
+			_log.Information(DiagnosticKind.SelfUpdateRestoring, _job.PreviousVersion);
+			if (backupExists)
+			{
+				File.Move(_backup, _target, overwrite: true);
+			}
+
+			Progress(_jobPath, SelfUpdatePhase.RolledBack, failure.GetType().Name);
 			using Process restored = StartOriginal();
-			throw;
+		}
+		catch (Exception ex) when (OperationErrors.CanReport(ex))
+		{
+			_log.Error(ex, DiagnosticKind.SelfUpdateRecoveryFailed);
+			try
+			{
+				Progress(_jobPath, SelfUpdatePhase.RecoveryFailed, ex.GetType().Name);
+			}
+			catch (Exception statusError) when (OperationErrors.CanReport(statusError))
+			{
+				_log.Error(statusError, DiagnosticKind.SelfUpdateRecoveryFailed);
+			}
+
+			if (Spectre.Console.AnsiConsole.Profile.Capabilities.Interactive)
+			{
+				ChrManager.Presentation.ConsoleView view = new();
+				view.Configure(new(_job.Language));
+				await view.AcknowledgeAsync().ConfigureAwait(false);
+			}
 		}
 	}
-	private static async Task ConfirmReadinessAsync (Process replacement, NamedPipeServerStream readiness, TimeSpan timeout)
+
+	private async Task ConfirmReadinessAsync (Process replacement, NamedPipeServerStream readiness, TimeSpan timeout)
 	{
 		try
 		{
@@ -121,6 +154,8 @@ internal sealed class ExecutableReplacement
 			{
 				throw new AppFailure(FailureKind.InvalidReadinessResponse);
 			}
+
+			Progress(_jobPath, SelfUpdatePhase.Complete);
 		}
 		catch
 		{

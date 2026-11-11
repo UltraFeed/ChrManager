@@ -57,12 +57,16 @@ internal sealed class ControllerRunner
 
 			view.Message(AppInfo.FullVersion);
 			using HttpClientProvider clients = new(settings.HttpTimeoutSeconds);
-			SettingsPreflight preflight = new(new ChromePlusReference(clients.Feed), view);
-			await preflight.ValidateAsync(settings, CancellationToken.None).ConfigureAwait(false);
-			_paths.EnsureWritable();
-			new StartupRegistration().Apply(settings.StartAtLogin, _paths.ExecutablePath);
-			UpdateJob? resume = await SelfUpdateWorker.AcknowledgeAsync(_paths, CancellationToken.None).ConfigureAwait(false);
-			await SelfUpdateWorker.FinishHandoverAsync(_paths, log, CancellationToken.None).ConfigureAwait(false);
+			UpdateJob? replacement = await SelfUpdateWorker.AcknowledgeAsync(_paths, CancellationToken.None).ConfigureAwait(false);
+			UpdateResume resume = await SelfUpdateWorker.FinishHandoverAsync(_paths, replacement, log, CancellationToken.None).ConfigureAwait(false);
+			if (resume.Job is null)
+			{
+				SettingsPreflight preflight = new(new ChromePlusReference(clients.Feed), view);
+				await preflight.ValidateAsync(settings, CancellationToken.None).ConfigureAwait(false);
+				_paths.EnsureWritable();
+				new StartupRegistration().Apply(settings.StartAtLogin, _paths.ExecutablePath);
+			}
+
 			HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { DisableDefaults = true, ContentRootPath = _paths.AppDirectory });
 			_ = builder.Logging.ClearProviders();
 			ApplicationComposition.RegisterManager(builder.Services, _paths, log, view, settings, resume, clients);

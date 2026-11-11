@@ -64,15 +64,14 @@ internal sealed class BrowserUpdateOperation
 				_view.Say(StringId.NoChecksum, browser.Folder);
 			}
 
-			using (IOperationProgress progress = _view.BeginOperation(_view.Language.Format(StringId.Downloading, browser.Folder, installation.Plan.Version)))
+			IDownloadProgress download = _view.BeginDownload(_view.Language.Format(StringId.Downloading, browser.Folder, installation.Plan.Version));
+			await using (download.ConfigureAwait(false))
 			{
-				await installation.DownloadAsync(progress, token).ConfigureAwait(false);
+				await installation.DownloadAsync(download, token).ConfigureAwait(false);
 			}
 
-			using (IOperationProgress progress = _view.BeginOperation(_view.Language.Format(StringId.Extracting, browser.Folder)))
-			{
-				await installation.ExtractAsync(progress, token).ConfigureAwait(false);
-			}
+			using IOperationProgress progress = _view.BeginOperation(_view.Language.Format(StringId.Extracting, browser.Folder));
+			await installation.ExtractAsync(progress, token).ConfigureAwait(false);
 		}
 		else
 		{

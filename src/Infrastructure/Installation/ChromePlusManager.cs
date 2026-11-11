@@ -2,6 +2,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ChrManager.Application;
+using ChrManager.Application.Contracts;
+using ChrManager.Presentation.Localization;
 using ChrManager.Application.Models;
 using ChrManager.Infrastructure.Archives;
 using ChrManager.Infrastructure.Configuration;
@@ -21,14 +23,16 @@ internal sealed class ChromePlusManager
 	private readonly RunState _state;
 	private readonly TimeProvider _time;
 	private readonly Uri? _endpoint;
+	private readonly IUserInterface _view;
 	private readonly Serilog.ILogger? _log;
-	public ChromePlusManager (HttpClient http, Downloader downloader, AppPaths paths, RunState state, TimeProvider time, Uri? endpoint = null, Serilog.ILogger? log = null)
+	public ChromePlusManager (HttpClient http, Downloader downloader, AppPaths paths, RunState state, TimeProvider time, IUserInterface view, Uri? endpoint = null, Serilog.ILogger? log = null)
 	{
 		_http = http;
 		_downloader = downloader;
 		_paths = paths;
 		_state = state;
 		_time = time;
+		_view = view;
 		_endpoint = endpoint;
 		_log = log;
 	}
@@ -77,13 +81,18 @@ internal sealed class ChromePlusManager
 			}
 		}
 
-		_log?.Information(DiagnosticKind.ChromePlusDownloading, asset.Name);
 		string package = _paths.CreateTemporaryFile("chrome-plus-package", Path.GetExtension(asset.Name));
 		string unpacked = _paths.CreateTemporaryFile("chrome-plus-unpacked");
 		string dll = _paths.CreateTemporaryFile("chrome-plus", ".dll");
 		try
 		{
-			string packageHash = await _downloader.DownloadAsync(new Uri(asset.Url), package, hash, asset.Size, null, token).ConfigureAwait(false);
+			string packageHash;
+			IDownloadProgress progress = _view.BeginDownload(_view.Language.Format(StringId.ChromePlusDownloading, asset.Name));
+			await using (progress.ConfigureAwait(false))
+			{
+				packageHash = await _downloader.DownloadAsync(new Uri(asset.Url), package, hash, asset.Size, progress, token).ConfigureAwait(false);
+			}
+
 			if (asset.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
 			{
 				File.Move(package, dll);
@@ -92,7 +101,7 @@ internal sealed class ChromePlusManager
 			{
 				await ArchiveExtractor.ExtractAsync(package, unpacked, null, token).ConfigureAwait(false);
 				string [] dlls = Directory.GetFiles(unpacked, "version.dll", SearchOption.AllDirectories);
-				List<string> compatible = dlls.Where(f => BrowserResolver.Architecture(f) == architecture).ToList();
+				List<string> compatible = dlls.Where(BrowserResolver.IsX64).ToList();
 				if (compatible.Count != 1)
 				{
 					throw new AppFailure(FailureKind.ChromePlusDllMissing);

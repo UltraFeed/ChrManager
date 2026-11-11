@@ -15,10 +15,10 @@ namespace ChrManager.Infrastructure.Startup;
 
 internal static class ApplicationComposition
 {
-	public static void RegisterManager (IServiceCollection services, AppPaths paths, ILogger log, ConsoleView view, LauncherSettings settings, UpdateJob? resume, HttpClientProvider clients)
+	public static void RegisterManager (IServiceCollection services, AppPaths paths, ILogger log, ConsoleView view, LauncherSettings settings, UpdateResume resume, HttpClientProvider clients)
 	{
 		_ = services.AddSingleton(settings);
-		_ = services.AddSingleton(new UpdateResume(resume));
+		_ = services.AddSingleton(resume);
 		_ = services.AddSingleton(paths);
 		_ = services.AddSingleton(log);
 		_ = services.AddSingleton<IUserInterface>(view);
@@ -55,7 +55,7 @@ internal static class ApplicationComposition
 
 	private static ChromePlusManager CreateChromePlus (IServiceProvider services)
 	{
-		return new(services.GetRequiredService<HttpClientProvider>().Feed, services.GetRequiredService<Downloader>(), services.GetRequiredService<AppPaths>(), services.GetRequiredService<RunState>(), services.GetRequiredService<TimeProvider>(), log: services.GetRequiredService<ILogger>());
+		return new(services.GetRequiredService<HttpClientProvider>().Feed, services.GetRequiredService<Downloader>(), services.GetRequiredService<AppPaths>(), services.GetRequiredService<RunState>(), services.GetRequiredService<TimeProvider>(), services.GetRequiredService<IUserInterface>(), log: services.GetRequiredService<ILogger>());
 	}
 
 	private static IReleaseFeed CreateFeed (IServiceProvider services)
@@ -66,7 +66,7 @@ internal static class ApplicationComposition
 	private static ISelfUpdatePreparation CreateSelfUpdate (IServiceProvider services)
 	{
 		SelfUpdateSource source = new(services.GetRequiredService<HttpClientProvider>().Feed);
-		return new SelfUpdater(services.GetRequiredService<AppPaths>(), services.GetRequiredService<RunState>(), source, services.GetRequiredService<Downloader>(), services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger>());
+		return new SelfUpdater(services.GetRequiredService<AppPaths>(), services.GetRequiredService<RunState>(), source, services.GetRequiredService<Downloader>(), services.GetRequiredService<IUserInterface>(), services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger>());
 	}
 }
 

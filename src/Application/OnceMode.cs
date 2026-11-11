@@ -10,11 +10,13 @@ internal sealed class OnceMode
 	private readonly IUserInterface _view;
 	private readonly LauncherSettings _settings;
 	private readonly TimeProvider _time;
-	public OnceMode (IUserInterface view, LauncherSettings settings, TimeProvider time)
+	private readonly UpdateResume _resume;
+	public OnceMode (IUserInterface view, LauncherSettings settings, TimeProvider time, UpdateResume resume)
 	{
 		_view = view;
 		_settings = settings;
 		_time = time;
+		_resume = resume;
 	}
 
 	public async Task RunAsync (PassExecution result)
@@ -25,7 +27,7 @@ internal sealed class OnceMode
 			return;
 		}
 
-		await ExitDelayAsync(_settings.ExitDelaySeconds, _time, _view.Countdown, _view.AcknowledgeAsync, _view.Language).ConfigureAwait(false);
+		await ExitDelayAsync(_resume.Job?.ExitDelaySeconds ?? _settings.ExitDelaySeconds, _time, _view.Countdown, _view.AcknowledgeAsync, _view.Language).ConfigureAwait(false);
 	}
 
 	public static async Task ExitDelayAsync (int seconds, TimeProvider time, Action<string> display, Func<Task> acknowledge, LocalizationProvider language)

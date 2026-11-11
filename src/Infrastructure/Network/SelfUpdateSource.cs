@@ -1,5 +1,4 @@
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using ChrManager.Application;
 using ChrManager.Application.Models;
@@ -11,12 +10,10 @@ internal sealed class SelfUpdateSource : ISelfUpdateSource
 {
 	private readonly HttpClient _http;
 	private readonly Uri _endpoint;
-	private readonly string _rid;
-	public SelfUpdateSource (HttpClient http, Uri? endpoint = null, string? rid = null)
+	public SelfUpdateSource (HttpClient http, Uri? endpoint = null)
 	{
 		_http = http;
 		_endpoint = endpoint ?? ProductionEndpoint;
-		_rid = rid ?? (RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "win-arm64" : "win-x64");
 	}
 
 	public static Uri ProductionEndpoint { get; } = new("https://api.github.com/repos/UltraFeed/ChrManager/releases/latest");
@@ -52,11 +49,17 @@ internal sealed class SelfUpdateSource : ISelfUpdateSource
 			throw new AppFailure(FailureKind.InvalidSelfUpdateRelease);
 		}
 
-		string expected = AppInfo.Name + "-" + _rid + ".exe";
+		string version = tag[1..];
+		if (VersionOrder.Compare(version, AppInfo.Version) <= 0)
+		{
+			return new(version);
+		}
+
+		string expected = AppInfo.ExecutableName;
 		JsonElement selected = default;
 		foreach (JsonElement asset in release.GetProperty("assets").EnumerateArray())
 		{
-			if (asset.GetProperty("name").GetString() != expected)
+			if (!string.Equals(asset.GetProperty("name").GetString(), expected, StringComparison.OrdinalIgnoreCase))
 			{
 				continue;
 			}
@@ -84,6 +87,6 @@ internal sealed class SelfUpdateSource : ISelfUpdateSource
 			throw new AppFailure(FailureKind.InvalidSelfUpdateRelease);
 		}
 
-		return new(tag [1..], _rid, url.AbsoluteUri, hash [7..]);
+		return new(version, new(url.AbsoluteUri, hash [7..]));
 	}
 }

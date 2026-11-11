@@ -33,6 +33,7 @@ internal sealed class SelfUpdateCoordinator
 				return SelfUpdateOutcome.None;
 			}
 
+			_view.Message(_view.Language.GetString(StringId.SelfUpdateRestarting));
 			await _handover.LaunchAsync(prepared, CancellationToken.None).ConfigureAwait(false);
 
 			return SelfUpdateOutcome.Handover;

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Text;
 using ChrManager.Application;
 using ChrManager.Infrastructure.Diagnostics;
 using ChrManager.Infrastructure.Persistence;
@@ -16,6 +17,8 @@ internal static class Program
 		LaunchContext? context = null;
 		try
 		{
+			// Set the Windows code page before Spectre.Console captures the output writer.
+			Console.OutputEncoding = new UTF8Encoding(false);
 			context = LaunchContext.Read();
 			AppPaths paths = AppPaths.Create();
 			ServiceCollection services = new();

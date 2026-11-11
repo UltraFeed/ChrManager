@@ -22,7 +22,6 @@ internal static class SelfUpdateWorker
 		ProcessStartInfo start = new(worker)
 		{
 			UseShellExecute = false,
-			CreateNoWindow = true,
 			WorkingDirectory = job.Root
 		};
 		start.Environment [InternalProtocol.UpdateJob] = jobPath;
@@ -69,7 +68,7 @@ internal static class SelfUpdateWorker
 		return job;
 	}
 
-	public static async Task FinishHandoverAsync (AppPaths paths, Serilog.ILogger log, CancellationToken token)
+	public static async Task<UpdateResume> FinishHandoverAsync (AppPaths paths, UpdateJob? replacement, Serilog.ILogger log, CancellationToken token)
 	{
 		string? path = Environment.GetEnvironmentVariable(InternalProtocol.CleanupJob);
 		string? nonce = Environment.GetEnvironmentVariable(InternalProtocol.CleanupToken);
@@ -77,9 +76,9 @@ internal static class SelfUpdateWorker
 		Environment.SetEnvironmentVariable(InternalProtocol.CleanupJob, null);
 		Environment.SetEnvironmentVariable(InternalProtocol.CleanupToken, null);
 		Environment.SetEnvironmentVariable(InternalProtocol.CleanupParent, null);
-		if (path is null && nonce is null && parent is null)
+		if (path is null && nonce is null && parent is null && replacement is null)
 		{
-			return;
+			return new(null, null);
 		}
 
 		if (path is null || nonce is null || !int.TryParse(parent, System.Globalization.CultureInfo.InvariantCulture, out int helperId) || helperId == Environment.ProcessId)
@@ -110,6 +109,17 @@ internal static class SelfUpdateWorker
 		}
 		catch (ArgumentException) { /* The helper already exited. */ }
 
+		SelfUpdatePhase? phase = ReadProgress(path)?.Phase;
+		SelfUpdatePhase expected = replacement is null ? SelfUpdatePhase.RolledBack : SelfUpdatePhase.Complete;
+		string version = replacement is null ? job.PreviousVersion : job.Version;
+		if (phase != expected || (replacement is not null && job.Nonce != replacement.Nonce) ||
+			!string.Equals(ValidateExecutable(job, path), paths.ExecutablePath, StringComparison.OrdinalIgnoreCase) ||
+			VersionOrder.Compare(version, AppInfo.Version) != 0)
+		{
+			throw new AppFailure(FailureKind.InvalidUpdateHandover);
+		}
+
 		files.Cleanup(log);
+		return new(job, phase);
 	}
 }

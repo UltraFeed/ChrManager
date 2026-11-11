@@ -25,6 +25,8 @@ internal sealed class CanonicalEnumConverter<T> : JsonConverter<T> where T : str
 			Add((T) (object) SelfUpdatePhase.Restoring, "restoring");
 			Add((T) (object) SelfUpdatePhase.Complete, "complete");
 			Add((T) (object) SelfUpdatePhase.Failed, "failed");
+			Add((T) (object) SelfUpdatePhase.RolledBack, "rolled-back");
+			Add((T) (object) SelfUpdatePhase.RecoveryFailed, "recovery-failed");
 			Add((T) (object) SelfUpdatePhase.Aborted, "aborted");
 		}
 		else

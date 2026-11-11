@@ -18,19 +18,13 @@ internal static class BuildSelection
 			throw new AppFailure(FailureKind.InvalidBrowserVersion);
 		}
 
-		List<BuildDownload> packages = (build.Downloads ?? []).Where(d => d.IsPortable).ToList();
+		List<BuildDownload> packages = (build.Downloads ?? []).Where(d => d.IsPortable && (d.Arch ?? (build.Arch?.Count == 1 ? build.Arch[0] : null)) == "x64").ToList();
 		if (packages.Count != 1)
 		{
 			throw new AppFailure(FailureKind.InvalidArchiveSelection, id);
 		}
 
 		BuildDownload package = packages [0];
-		string? arch = package.Arch ?? (build.Arch?.Count == 1 ? build.Arch [0] : null);
-		if (arch is not ("x64" or "x86" or "arm64"))
-		{
-			throw new AppFailure(FailureKind.AmbiguousArchitecture);
-		}
-
-		return new(build, package, arch);
+		return new(build, package, "x64");
 	}
 }

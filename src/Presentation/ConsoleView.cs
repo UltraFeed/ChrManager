@@ -34,9 +34,15 @@ internal sealed class ConsoleView : IUserInterface
 	public async Task AcknowledgeAsync ()
 	{
 		ConsoleLine.Write(ConsoleRenderer.FormatInfo("Acknowledge", Language.GetString(StringId.PressEnter)), Style.Plain);
-		while (await AnsiConsole.Console.Input.ReadKeyAsync(true, CancellationToken.None).ConfigureAwait(false) is { Key: not ConsoleKey.Enter })
+		while (AnsiConsole.Profile.Capabilities.Interactive &&
+			await AnsiConsole.Console.Input.ReadKeyAsync(true, CancellationToken.None).ConfigureAwait(false) is { Key: not ConsoleKey.Enter })
 		{ }
 	}
+	public IDownloadProgress BeginDownload (string title)
+	{
+		return new DownloadDisplay(title, Language);
+	}
+
 	public IOperationProgress BeginOperation (string title)
 	{
 		_renderer.Render(new("phase", title));

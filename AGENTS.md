@@ -1,9 +1,9 @@
 # Project rules
 
-- This is the first release: application version 1.0.0. User configuration has no version field. Require correct JSON commas; comments are allowed, trailing commas are rejected.
+- The application version is defined in Directory.Build.props. User configuration has no version field. Require correct JSON commas; comments are allowed, trailing commas are rejected.
 - Do not add migrations, deprecated formats, aliases, or backward compatibility unless the user explicitly requests it.
 - Do not persist updater state, caches or cross-launch recovery journals. Temporary live-operation files and in-process rollback are allowed; do not replay old jobs on startup.
-- Keep application data portable, under the executable directory. Autostart uses a Startup shortcut, never the registry.
+- Keep application data portable, under the executable directory. Autostart uses a Startup shortcut.
 - User configuration is settings.json beside the executable. Log only to the console, never to files. Do not create a permanent service directory. Use uniquely named ChrManager temporary files beside the executable and delete them after use. Temporary extraction directories are allowed only for active archive operations and must be removed afterward.
 - All user-facing messages must use validated, complete en/ru localization resources. Do not ship other translations.
 - Console logs use typed DiagnosticKind events and SpectreLogSink. Never print raw exception messages or English log templates to the console. Domain failures carry FailureKind and arguments; the presentation layer selects localized text. Keep technical exception types and stack traces as diagnostic context.
@@ -19,7 +19,7 @@
 - Never call Win32 APIs or COM interfaces directly from application sources. Do not add P/Invoke declarations, native exports, COM declarations, dynamic COM activation or native function pointers. Use standard .NET APIs or maintained, Native AOT-compatible NuGet libraries. Startup shortcuts use SharpShellLink.
 - Keep shared build defaults in Directory.Build.props. Store build intermediates and published binaries under the root tmp/ directory. Isolate project build outputs by project name. Portable release artifacts must be produced by dotnet publish without shell scripts.
 
-- Release assets are standalone ChrManager-win-x64.exe and ChrManager-win-arm64.exe files; do not generate release archives or release metadata during build/publish. Do not commit binaries or archive fixtures.
+- The release asset is a standalone Windows x64 ChrManager.exe; do not generate release archives or release metadata during build/publish. Do not commit binaries or archive fixtures.
 
 - Publish the application with Native AOT in Debug and Release. Use source-generated JSON metadata. Do not generate user configuration; README contains the maintained English JSONC example. Missing settings waits for acknowledgement and exits with Environment.Exit(0). Debug native symbols are a separate PDB, never embedded.
 
