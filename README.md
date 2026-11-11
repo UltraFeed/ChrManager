@@ -64,8 +64,10 @@ Create settings.json beside the executable using this example.
 			"flags":
 			[
 				"--no-default-browser-check",
+				"--disable-domain-reliability",
 				"--disable-logging",
-				"--no-report-upload"
+				"--no-pings",
+				"--metrics-recording-only"
 			],
 			"chromePlus":
 			{
@@ -136,7 +138,7 @@ Create settings.json beside the executable using this example.
 }
 ```
 
-## Files and updates
+## Files
 
 ```text
 ChrManager.exe
