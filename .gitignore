@@ -1,0 +1,9 @@
+# build output
+/tmp/
+bin/
+obj/
+build/
+
+# temporary files
+.vs/
+*.user
