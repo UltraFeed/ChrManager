@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using ChrManager.Application;
-using ChrManager.Application.Models;
 using ChrManager.Application.Contracts;
-using ChrManager.Presentation.Localization;
+using ChrManager.Application.Models;
 using ChrManager.Infrastructure.Installation;
 using ChrManager.Infrastructure.Network;
 using ChrManager.Infrastructure.Persistence;
 using ChrManager.Infrastructure.Startup;
+using ChrManager.Presentation.Localization;
 using Serilog;
 
 namespace ChrManager.Infrastructure.SelfUpdate;

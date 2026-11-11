@@ -42,7 +42,7 @@ internal static class ConfigurationShape
 				int index = 0;
 				foreach (JsonElement browser in value.EnumerateArray())
 				{
-					CheckObject(browser, ConfigLoader.Options.GetTypeInfo(typeof(BrowserSettings)), childPath + "[" + index++ + "]", missing);
+					CheckObject(browser, ConfigLoader.Options.GetTypeInfo<BrowserSettings>(), childPath + "[" + index++ + "]", missing);
 				}
 			}
 			else

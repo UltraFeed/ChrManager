@@ -44,12 +44,12 @@ internal sealed class SelfUpdateSource : ISelfUpdateSource
 	private SelfRelease ReadRelease (JsonElement release)
 	{
 		string? tag = release.GetProperty("tag_name").GetString();
-		if (tag is null || !tag.StartsWith('v') || !Version.TryParse(tag [1..], out _))
+		if (tag is null || !tag.StartsWith('v', StringComparison.Ordinal) || !Version.TryParse(tag [1..], out _))
 		{
 			throw new AppFailure(FailureKind.InvalidSelfUpdateRelease);
 		}
 
-		string version = tag[1..];
+		string version = tag [1..];
 		if (VersionOrder.Compare(version, AppInfo.Version) <= 0)
 		{
 			return new(version);

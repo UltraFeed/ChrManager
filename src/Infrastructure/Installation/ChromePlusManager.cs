@@ -3,13 +3,13 @@ using System.Text;
 using System.Text.Json;
 using ChrManager.Application;
 using ChrManager.Application.Contracts;
-using ChrManager.Presentation.Localization;
 using ChrManager.Application.Models;
 using ChrManager.Infrastructure.Archives;
 using ChrManager.Infrastructure.Configuration;
 using ChrManager.Infrastructure.Network;
 using ChrManager.Infrastructure.Persistence;
 using ChrManager.Infrastructure.Startup;
+using ChrManager.Presentation.Localization;
 
 namespace ChrManager.Infrastructure.Installation;
 

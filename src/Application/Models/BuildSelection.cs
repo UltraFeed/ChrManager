@@ -18,7 +18,7 @@ internal static class BuildSelection
 			throw new AppFailure(FailureKind.InvalidBrowserVersion);
 		}
 
-		List<BuildDownload> packages = (build.Downloads ?? []).Where(d => d.IsPortable && (d.Arch ?? (build.Arch?.Count == 1 ? build.Arch[0] : null)) == "x64").ToList();
+		List<BuildDownload> packages = (build.Downloads ?? []).Where(d => d.IsPortable && (d.Arch ?? (build.Arch?.Count == 1 ? build.Arch [0] : null)) == "x64").ToList();
 		if (packages.Count != 1)
 		{
 			throw new AppFailure(FailureKind.InvalidArchiveSelection, id);

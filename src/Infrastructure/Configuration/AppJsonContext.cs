@@ -19,7 +19,7 @@ internal sealed partial class AppJsonContext : JsonSerializerContext
 {
 	internal static JsonTypeInfo<T> Type<T> (JsonSerializerOptions options)
 	{
-		return (JsonTypeInfo<T>) options.GetTypeInfo(typeof(T));
+		return options.GetTypeInfo<T>();
 	}
 }
 

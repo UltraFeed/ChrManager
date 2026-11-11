@@ -113,7 +113,7 @@ internal sealed class DownloadDisplay : IDownloadProgress
 		int available = Math.Max(0, AnsiConsole.Profile.Width - prefix.Length - suffix.Length);
 		if (title.Length > available)
 		{
-			title = available < 4 ? string.Empty : title[..(available - 3)] + "...";
+			title = available < 4 ? string.Empty : title [..(available - 3)] + "...";
 		}
 
 		return new Text(prefix + title + suffix, DownloadStyle) { Overflow = Overflow.Crop };

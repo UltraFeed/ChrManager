@@ -1,6 +1,6 @@
 name: Release
-on:
-  workflow_dispatch:
+'on':
+  workflow_dispatch: null
 permissions:
   contents: read
 concurrency:
@@ -18,7 +18,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: 11.0.x
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes --severity info
       - name: Read version and reject existing tag
         id: version
         shell: pwsh
@@ -41,6 +43,9 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_VERSION: ${{ steps.version.outputs.value }}
           RELEASE_SHA: ${{ github.sha }}
-        run: |
-          gh release create "v$env:RELEASE_VERSION" --target $env:RELEASE_SHA --title "ChrManager $env:RELEASE_VERSION" --generate-notes tmp/bin/release/ChrManager.exe
+        run: >
+          gh release create "v$env:RELEASE_VERSION" --target $env:RELEASE_SHA
+          --title "ChrManager $env:RELEASE_VERSION" --generate-notes
+          tmp/bin/release/ChrManager.exe
+
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

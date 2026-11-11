@@ -15,7 +15,7 @@ internal static class ArchiveLayout
 {
 	public static string NormalizePath (string? rawPath)
 	{
-		if (string.IsNullOrWhiteSpace(rawPath) || rawPath.StartsWith('/') || rawPath.StartsWith('\\'))
+		if (string.IsNullOrWhiteSpace(rawPath) || rawPath.StartsWith('/', StringComparison.Ordinal) || rawPath.StartsWith('\\', StringComparison.Ordinal))
 		{
 			throw new AppFailure(FailureKind.ArchivePathInvalid);
 		}

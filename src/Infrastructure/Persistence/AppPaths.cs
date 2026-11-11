@@ -116,7 +116,7 @@ internal static class PortablePaths
 {
 	public static void ValidateFolder (string folder)
 	{
-		if (string.IsNullOrWhiteSpace(folder) || folder is "." or ".." || folder.EndsWith('.') || folder.EndsWith(' ') || folder.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || folder.Contains('/', StringComparison.Ordinal) || folder.Contains('\\', StringComparison.Ordinal) || Path.IsPathRooted(folder))
+		if (string.IsNullOrWhiteSpace(folder) || folder is "." or ".." || folder.EndsWith('.', StringComparison.Ordinal) || folder.EndsWith(' ', StringComparison.Ordinal) || folder.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || folder.Contains('/', StringComparison.Ordinal) || folder.Contains('\\', StringComparison.Ordinal) || Path.IsPathRooted(folder))
 		{
 			throw new AppFailure(FailureKind.InvalidBrowserFolder, folder);
 		}

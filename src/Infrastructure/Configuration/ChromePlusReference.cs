@@ -51,12 +51,12 @@ internal sealed class ChromePlusReference : IChromePlusReference
 		while (reader.ReadLine() is { } raw)
 		{
 			string line = raw.Trim();
-			if (line.Length == 0 || line.StartsWith(';') || line.StartsWith('#'))
+			if (line.Length == 0 || line.StartsWith(';', StringComparison.Ordinal) || line.StartsWith('#', StringComparison.Ordinal))
 			{
 				continue;
 			}
 
-			if (line.StartsWith('[') && line.EndsWith(']'))
+			if (line.StartsWith('[', StringComparison.Ordinal) && line.EndsWith(']', StringComparison.Ordinal))
 			{
 				string section = line [1..^1];
 				current = new(StringComparer.Ordinal);
