@@ -53,25 +53,6 @@ internal sealed class ConsoleView : IUserInterface
 
 	public IOperationProgress BeginOperation (StringId title, params object? [] arguments)
 	{
-		string label = _language.Format(title, arguments);
-		_renderer.Render(new("phase", label));
-		return new ProgressScope(_renderer, label);
-	}
-	private sealed class ProgressScope : IOperationProgress
-	{
-		private readonly ConsoleRenderer _renderer;
-		private readonly string _title;
-		public ProgressScope (ConsoleRenderer renderer, string title)
-		{
-			_renderer = renderer;
-			_title = title;
-		}
-		public void Report (double value)
-		{
-			_renderer.Render(new("progress", _title, value));
-		}
-		public void Dispose ()
-		{
-		}
+		return new OperationDisplay(_language.Format(title, arguments), _language);
 	}
 }

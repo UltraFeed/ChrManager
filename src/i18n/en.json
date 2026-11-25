@@ -1,4 +1,6 @@
 {
+	"operationFinished": "{0} — completed.",
+	"operationInterrupted": "{0} — interrupted.",
 	"ambiguousArchitecture": "The package architecture cannot be determined unambiguously.",
 	"applicationFailed": "Application operation failed.",
 	"applicationStartupFailed": "Application startup failed.",

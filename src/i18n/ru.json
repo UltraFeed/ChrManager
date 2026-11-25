@@ -1,4 +1,6 @@
 {
+	"operationFinished": "{0} — завершено.",
+	"operationInterrupted": "{0} — прервано.",
 	"ambiguousArchitecture": "Не удалось однозначно определить архитектуру пакета.",
 	"applicationFailed": "Ошибка работы приложения.",
 	"applicationStartupFailed": "Не удалось запустить приложение.",

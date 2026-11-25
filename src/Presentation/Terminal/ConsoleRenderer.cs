@@ -18,12 +18,6 @@ internal sealed class ConsoleRenderer
 				case "line":
 					ConsoleLine.Write(FormatInfo("Countdown", packet.Text), new Style(Color.Yellow));
 					break;
-				case "progress":
-					ConsoleLine.Write(FormatInfo("Progress", FormatProgress(packet)), new Style(Color.Cyan));
-					break;
-				case "phase":
-					ConsoleLine.Write(FormatInfo("Progress", packet.Text), new Style(Color.Cyan));
-					break;
 				case "message":
 					ConsoleLine.Write(FormatInfo("Message", packet.Text), LogEventLevel.Information);
 					break;
@@ -44,13 +38,5 @@ internal sealed class ConsoleRenderer
 	public static string FormatInfo (string operation, string? text)
 	{
 		return ConsoleLine.Format(DateTimeOffset.Now, LogEventLevel.Information, operation, text);
-	}
-
-	private static string FormatProgress (ConsoleEvent packet)
-	{
-		const int barWidth = 12;
-		double percent = Math.Clamp(packet.Value, 0, 100);
-		int filled = (int) (percent * barWidth / 100);
-		return $"{packet.Text} {new string('━', filled)}{new string('─', barWidth - filled)} {percent:0}%";
 	}
 }

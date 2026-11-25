@@ -11,8 +11,9 @@ internal enum BrowserCloseAction
 	ForceTerminate
 }
 
-internal interface IOperationProgress : IProgress<double>, IDisposable
+internal interface IOperationProgress : IProgress<double>, IAsyncDisposable
 {
+	public void Complete ();
 }
 
 internal readonly record struct DownloadProgress (long Received, long? Total, bool Complete = false);

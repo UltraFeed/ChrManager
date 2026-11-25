@@ -69,8 +69,12 @@ internal sealed class BrowserUpdateOperation
 				await installation.DownloadAsync(download, token).ConfigureAwait(false);
 			}
 
-			using IOperationProgress progress = _view.BeginOperation(StringId.Extracting, browser.Folder);
-			await installation.ExtractAsync(progress, token).ConfigureAwait(false);
+			IOperationProgress progress = _view.BeginOperation(StringId.Extracting, browser.Folder);
+			await using (progress.ConfigureAwait(false))
+			{
+				await installation.ExtractAsync(progress, token).ConfigureAwait(false);
+				progress.Complete();
+			}
 		}
 		else
 		{

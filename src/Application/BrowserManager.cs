@@ -32,8 +32,12 @@ internal sealed class BrowserManager
 		int failed = 0;
 		try
 		{
-			using IOperationProgress progress = _view.BeginOperation(StringId.CheckFeed);
-			builds = await _feed.GetBuildsAsync(token).ConfigureAwait(false);
+			IOperationProgress progress = _view.BeginOperation(StringId.CheckFeed);
+			await using (progress.ConfigureAwait(false))
+			{
+				builds = await _feed.GetBuildsAsync(token).ConfigureAwait(false);
+				progress.Complete();
+			}
 		}
 		catch (Exception ex) when (ex is not OperationCanceledException || !token.IsCancellationRequested)
 		{

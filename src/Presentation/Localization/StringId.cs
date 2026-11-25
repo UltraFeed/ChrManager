@@ -2,6 +2,8 @@ namespace ChrManager.Presentation.Localization;
 
 internal enum StringId
 {
+	OperationFinished,
+	OperationInterrupted,
 	MissingSettings,
 	ChromePlusAddSettings,
 	ChromePlusRemoveSettings,
